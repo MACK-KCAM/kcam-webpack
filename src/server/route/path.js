@@ -1,7 +1,7 @@
 // ALL API REQUESTS ARE PROCESSED IN IPATH TO DETERMINE TYPE OF REQUEST
 function path(url) {
     const allRoutes = {
-        "/sampleController": {
+        "/users": {
             methods: ["GET", "POST", "PUT", "DELETE"]
         }
     }

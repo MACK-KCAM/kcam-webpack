@@ -1,6 +1,6 @@
-const sampleController = require('./routes/sampleController');
+const users = require('./routes/users');
 
 // DEFAULT API ROUTE HANDLER
 module.exports = { 
-  sampleController,
+  users,
 };

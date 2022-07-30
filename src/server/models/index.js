@@ -1,6 +1,6 @@
-const sampleController = require('./sampleController');
+const users = require('./users');
 
 // DEFAULT MONGOOSE MODEL HANDLER
 module.exports = {
-  sampleController
+  users
 }

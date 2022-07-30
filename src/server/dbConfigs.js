@@ -2,11 +2,11 @@ const mongoose = require('mongoose');
 
 const configs = {
   mongodb: {
-      url: '@scion.lsiun.mongodb.net', //@---->.[com,net]
+      url: '@cluster-zero.8p6g9.mongodb.net', //@---->.[com,net]
       port: 27017,
-      username: 'murad',
-      password: 'Potnas-ninmo2-wocduf',
-      collection: 'sciondemo',
+      username: 'dev',
+      password: 'environment',
+      collection: 'kcam-dev',
   }
 }
 

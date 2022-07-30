@@ -10,7 +10,7 @@ export default class App extends React.Component {
 
   getRequest = async () => {
     try {
-      const res = await Get(apiRoute.getRoute('sampleController'));
+      const res = await Get(apiRoute.getRoute('users'));
       console.log(res);
       this.setState({ NFTs: res });
     } catch (e) {
@@ -21,7 +21,7 @@ export default class App extends React.Component {
   setRequest = async (itemToPost) => {
     try {
       const res = await Post(
-        apiRoute.getRoute('sampleController'),
+        apiRoute.getRoute('users'),
         itemToPost
       );
       console.log(res);

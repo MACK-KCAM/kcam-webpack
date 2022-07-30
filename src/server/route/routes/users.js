@@ -1,10 +1,10 @@
-const {Types} = require('mongoose');
+const { Types } = require('mongoose');
 const router = require('../router');
-const {sampleController} = require('../../models');
+const { users } = require('../../models');
 
-router.route('/sampleController')
+router.route('/users')
     .get(async (req, res) => {
-      console.log(`Received ${req.method} request at api/watched`)
+      console.log(`Received ${req.method} request at api/users`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -14,7 +14,7 @@ router.route('/sampleController')
       }
       try {
         // FETCH ALL WATCHED NFT METADATA ASSOCIATED WITH USER ID
-        const response = await sampleController.find({ watched: true });
+        const response = await users.find({ watched: true });
         console.log('Documents successfully retrieved from MongoDB');
         res.json(response);
       } catch (err) {
@@ -27,7 +27,7 @@ router.route('/sampleController')
       }
     })
     .post(async (req, res) => {
-      console.log(`Received ${req.method} request at api/watched`)
+      console.log(`Received ${req.method} request at api/users`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -37,7 +37,7 @@ router.route('/sampleController')
       }
       // SAVE POSTED METADATA IN WATCHED COLLECTION
       const { tokenId, ownerAddress, contractAddress, image, title, description, attributes, userId, watched } = req.body;
-        const Attempt = new sampleController({ _id: Types.ObjectId(), tokenId, ownerAddress, contractAddress, image, title, description, attributes, userId, watched });
+        const Attempt = new users({ _id: Types.ObjectId(), tokenId, ownerAddress, contractAddress, image, title, description, attributes, userId, watched });
         try {
           const saveAttempt = await Attempt.save();
           console.log(`Document successfully stored in MongoDB ${tokenId}`);
@@ -52,7 +52,7 @@ router.route('/sampleController')
         }
     })
     .put(async (req, res) => {
-      console.log(`Received ${req.method} request at api/watched`)
+      console.log(`Received ${req.method} request at api/users`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -66,7 +66,7 @@ router.route('/sampleController')
       const params = { ownerAddress, contractAddress, image, title, description, attributes, userId, watched };
       for (const prop in params) if(!params[prop]) delete params[prop];
       try {
-        const response = await sampleController.findOneAndUpdate({ tokenId: tokenId }, params, { upsert: true, useFindAndModify: false })
+        const response = await users.findOneAndUpdate({ tokenId: tokenId }, params, { upsert: true, useFindAndModify: false })
         console.log(`Document successfully updated in MongoDB: ${tokenId}`);
         res.status(200).json(response);
       } catch (err) {
@@ -79,7 +79,7 @@ router.route('/sampleController')
       }
     })
     .delete(async (req, res) => {
-      console.log(`Received ${req.method} request at api/watched`)
+      console.log(`Received ${req.method} request at api/users`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -90,7 +90,7 @@ router.route('/sampleController')
       // DELETE NFT METADATA BY TOKENID
       const { tokenId } = req.body;
       try {
-        const response = await sampleController.deleteOne({ tokenId: tokenId });
+        const response = await users.deleteOne({ tokenId: tokenId });
         console.log(`Document successfully deleted from MongoDB: ${tokenId}`);
         res.status(200).json(response);
       } catch (err) {
