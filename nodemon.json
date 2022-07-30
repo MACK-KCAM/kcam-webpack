@@ -1,0 +1,12 @@
+{
+  "ignore": [
+    "**/*.sampleController.js",
+    "**/*.spec.js",
+    "node_modules",
+    "src/client"
+  ],
+  "watch": [
+    "src/server"
+  ],
+  "exec": "node src/server/"
+}

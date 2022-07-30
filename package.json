@@ -1,0 +1,53 @@
+{
+  "name": "kcam",
+  "version": "0.1.0",
+  "description": "immersive photo explorer",
+  "main": "server/index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "npm run build && npm run server",
+    "server": "node src/server/",
+    "client": "webpack-dev-server --mode development --devtool inline-source-map --hot",
+    "dev": "concurrently \"nodemon\" \"npm run client\"",
+    "server-dev": "nodemon"
+  },
+  "author": "Murad Alqadi, Alyssa Chew, Chris Jamali, Kevin Le",
+  "license": "none",
+  "dependencies": {
+    "@rails/webpacker": "5.4.2",
+    "babel-polyfill": "^6.26.0",
+    "express": "^4.16.3",
+    "mongoose": "^5.10.11",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-redux": "^7.2.2"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.0.0",
+    "@babel/plugin-proposal-class-properties": "^7.0.0",
+    "@babel/preset-env": "^7.0.0",
+    "@babel/preset-react": "^7.0.0",
+    "babel-eslint": "^10.0.0",
+    "babel-loader": "^8.0.0",
+    "concurrently": "^7.3.0",
+    "copy-webpack-plugin": "^11.0.0",
+    "cross-env": "^7.0.3",
+    "css-loader": "^2.0.0",
+    "eslint": "^7.19.0",
+    "eslint-config-airbnb": "^17.0.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.7.0",
+    "file-loader": "^3.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "mini-css-extract-plugin": "^2.6.1",
+    "nodemon": "^2.0.19",
+    "source-map-loader": "^4.0.0",
+    "style-loader": "^3.3.1",
+    "url-loader": "^4.1.1",
+    "webpack": "^5.74.0",
+    "webpack-cli": "^4.10.0",
+    "webpack-dev-server": "^4.9.3"
+  }
+}
