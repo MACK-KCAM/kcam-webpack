@@ -8,7 +8,7 @@ const usersSchema = new Schema({
   authId: {type: String, required: false},
   firstName: String,
   lastName: String,
-  images: {},
+  images: Schema.Types.Mixed,
   favorites: [String]
 });
 
