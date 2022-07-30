@@ -1,9 +1,10 @@
-const path = require('../route/path');
+const path = require('../../route/path');
 
 // CHECK PATH FILE TO DETERMINE IF REQUESTED ROUTE HAS REQUESTED METHOD DEFINED
 const func = (req, res, next) => {
     console.log(`Middleware received ${req.method} request from ${req.socket.remoteAddress}`);
     const route = path(req.url);
+    console.log(route)
     if (route.methods.includes(req.method)) {
         next();
     } else {

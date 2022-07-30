@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 const router = require('../router');
-const { photos } = require('../../models');
+const { userModel } = require('../../models');
 
 // Albums:
 // GET: authId, images[i]
@@ -24,8 +24,11 @@ router.route('/albums')
       const { authId, albumId } = req.body;
       try {
         // FETCH ALL WATCHED NFT METADATA ASSOCIATED WITH USER ID
-        const response = await albums.find({ 
-          authId: authId
+        const response = await userModel.find({ 
+          authId: authId, 
+          images: {
+            [albumId]: []
+          },
         });
         console.log('Documents successfully retrieved from MongoDB');
         res.json(response);
@@ -49,7 +52,7 @@ router.route('/albums')
       }
       // SAVE POSTED METADATA IN WATCHED COLLECTION
       const { authId, images, favorites, firstName, lastName } = req.body;
-        const Attempt = new albums({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
+        const Attempt = new userModel({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
         try {
           const saveAttempt = await Attempt.save();
           console.log(`Document successfully stored in MongoDB ${authId}`);
@@ -78,7 +81,7 @@ router.route('/albums')
       const params = { authId, images, favorites, firstName, lastName };
       for (const prop in params) if(!params[prop]) delete params[prop];
       try {
-        const response = await albums.findOneAndUpdate({ authId: authId }, params, { upsert: true, useFindAndModify: false })
+        const response = await userModel.findOneAndUpdate({ authId: authId }, params, { upsert: true, useFindAndModify: false })
         console.log(`Document successfully updated in MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {
@@ -102,7 +105,7 @@ router.route('/albums')
       // DELETE NFT METADATA BY TOKENID
       const { tokenId } = req.body;
       try {
-        const response = await albums.deleteOne({ authId: authId });
+        const response = await userModel.deleteOne({ authId: authId });
         console.log(`Document successfully deleted from MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {

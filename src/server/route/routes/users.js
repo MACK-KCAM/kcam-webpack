@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 const router = require('../router');
-const { users } = require('../../models');
+const { userModel } = require('../../models');
 
 router.route('/users')
     .get(async (req, res) => {
@@ -15,7 +15,7 @@ router.route('/users')
       try {
         // FETCH ALL DATA ASSOCIATED WITH AUTH ID
         const { authId } = req.body;
-        const response = await users.find({ authId: authId });
+        const response = await userModel.find({ authId: authId });
         console.log('Documents successfully retrieved from MongoDB');
         res.json(response);
       } catch (err) {
@@ -38,7 +38,7 @@ router.route('/users')
       }
       // SAVE NEW USER
       const { authId, username, password, firstName, lastName } = req.body;
-        const Attempt = new users({ _id: Types.ObjectId(), authId, username, password, firstName, lastName });
+        const Attempt = new userModel({ _id: Types.ObjectId(), authId, username, password, firstName, lastName });
         try {
           const saveAttempt = await Attempt.save();
           console.log(`Document successfully stored in MongoDB ${authId}`);
@@ -67,7 +67,7 @@ router.route('/users')
       const params = { username, password, firstName, lastName };
       for (const prop in params) if(!params[prop]) delete params[prop];
       try {
-        const response = await users.findOneAndUpdate({ authId: authId }, params, { upsert: false, useFindAndModify: false })
+        const response = await userModel.findOneAndUpdate({ authId: authId }, params, { upsert: false, useFindAndModify: false })
         console.log(`Document successfully updated in MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {
@@ -92,7 +92,7 @@ router.route('/users')
       const { authId } = req.body;
       // DELETE USER DATA BY USER ID
       try {
-        const response = await users.deleteOne({ authId: authId });
+        const response = await userModel.deleteOne({ authId: authId });
         console.log(`Document successfully deleted from MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {

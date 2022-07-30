@@ -1,10 +1,10 @@
 const { Types } = require('mongoose');
 const router = require('../router');
-const { users } = require('../../models');
+const { userModel } = require('../../models');
 
-router.route('/users')
+router.route('/favorites')
     .get(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/favorites`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -14,7 +14,7 @@ router.route('/users')
       }
       try {
         // FETCH ALL WATCHED NFT METADATA ASSOCIATED WITH USER ID
-        const response = await users.find({ });
+        const response = await userModel.find({ });
         console.log('Documents successfully retrieved from MongoDB');
         res.json(response);
       } catch (err) {
@@ -27,7 +27,7 @@ router.route('/users')
       }
     })
     .post(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/favorites`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -37,7 +37,7 @@ router.route('/users')
       }
       // SAVE POSTED METADATA IN WATCHED COLLECTION
       const { authId, images, favorites, firstName, lastName } = req.body;
-        const Attempt = new users({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
+        const Attempt = new userModel({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
         try {
           const saveAttempt = await Attempt.save();
           console.log(`Document successfully stored in MongoDB ${authId}`);
@@ -52,7 +52,7 @@ router.route('/users')
         }
     })
     .put(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/favorites`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -66,7 +66,7 @@ router.route('/users')
       const params = { authId, images, favorites, firstName, lastName, username, password };
       for (const prop in params) if(!params[prop]) delete params[prop];
       try {
-        const response = await users.findOneAndUpdate({ authId: authId }, params, { upsert: false, useFindAndModify: false })
+        const response = await userModel.findOneAndUpdate({ authId: authId }, params, { upsert: false, useFindAndModify: false })
         console.log(`Document successfully updated in MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {
@@ -79,7 +79,7 @@ router.route('/users')
       }
     })
     .delete(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/favorites`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -90,7 +90,7 @@ router.route('/users')
       // DELETE NFT METADATA BY TOKENID
       const { tokenId } = req.body;
       try {
-        const response = await users.deleteOne({ authId: authId });
+        const response = await userModel.deleteOne({ authId: authId });
         console.log(`Document successfully deleted from MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {

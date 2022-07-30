@@ -15,7 +15,7 @@ const usersSchema = new Schema({
 
 
 
-module.exports = model('users', usersSchema, 'users'); // THIRD PARAMETER DEFINES DEFAULT COLLECTION NAME
+module.exports = model('userModel', usersSchema, 'users'); // THIRD PARAMETER DEFINES DEFAULT COLLECTION NAME
 
 
 // {

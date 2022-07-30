@@ -4,12 +4,13 @@ function path(url) {
     "/users": {
       methods: ["GET", "POST", "PUT", "DELETE"]
     },
-    "albums": {
+    "/albums": {
       methods: ["GET", "POST", "PUT", "DELETE"]
     },
     "/photos": {
       methods: ["GET", "POST", "PUT", "DELETE"]
-    },"/favorites": {
+    },
+    "/favorites": {
       methods: ["GET", "POST", "PUT", "DELETE"]
     }
   }
