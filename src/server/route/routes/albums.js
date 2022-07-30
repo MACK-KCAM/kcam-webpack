@@ -3,11 +3,7 @@ const router = require('../router');
 const { userModel } = require('../../models');
 
 // Albums:
-// GET: authId, images[i]
-// // images["i"]
-//   // user.images["i"] // { name, photos }
-//   // for loop and render img component for user.images[1].photos // ["image3.jpg", "image4.png"]
-// POST: authId, images[i] vs name, description
+
 // PUT: authId, images[i] vs name, name, description
 // DELETE: authId, images[i] vs name
 
@@ -24,12 +20,8 @@ router.route('/albums')
       const { authId, albumId } = req.body;
       try {
         // FETCH ALL WATCHED NFT METADATA ASSOCIATED WITH USER ID
-        const response = await userModel.find({ 
-          authId: authId, 
-          images: {
-            [albumId]: []
-          },
-        });
+        let response = await userModel.find({ authId: authId });
+        response = response[0].images[albumId].photos;
         console.log('Documents successfully retrieved from MongoDB');
         res.json(response);
       } catch (err) {
@@ -51,7 +43,7 @@ router.route('/albums')
         res.status(error.status).json(error);
       }
       // SAVE POSTED METADATA IN WATCHED COLLECTION
-      const { authId, images, favorites, firstName, lastName } = req.body;
+      const { authId, name, description } = req.body;
         const Attempt = new userModel({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
         try {
           const saveAttempt = await Attempt.save();
