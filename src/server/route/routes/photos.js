@@ -1,10 +1,12 @@
 const { Types } = require('mongoose');
 const router = require('../router');
-const { users } = require('../../models');
+const { photos } = require('../../models');
+const { imgUpload } = require('../../middlewares/uploads/imgUpload');
+// const { imgUpload } = require('../../middlewares/uploads/imgUpload.js');
 
-router.route('/users')
+router.route('/photos')
     .get(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/photos`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -13,9 +15,8 @@ router.route('/users')
         res.status(error.status).json(error);
       }
       try {
-        // FETCH ALL DATA ASSOCIATED WITH AUTH ID
-        const { authId } = req.body;
-        const response = await users.find({ authId: authId });
+        // FETCH ALL WATCHED NFT METADATA ASSOCIATED WITH USER ID
+        const response = await photos.find({ });
         console.log('Documents successfully retrieved from MongoDB');
         res.json(response);
       } catch (err) {
@@ -28,7 +29,7 @@ router.route('/users')
       }
     })
     .post(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/photos`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -36,9 +37,11 @@ router.route('/users')
         }
         res.status(error.status).json(error);
       }
-      // SAVE NEW USER
-      const { authId, username, password, firstName, lastName } = req.body;
-        const Attempt = new users({ _id: Types.ObjectId(), authId, username, password, firstName, lastName });
+      // RUN REQUEST THROUGH MIDDLEWARE
+      // const imgUrl = await imgUpload(req); // return string of URL
+      // SAVE POSTED METADATA IN WATCHED COLLECTION
+      const { authId, images, favorites, firstName, lastName } = req.body;
+        const Attempt = new photos({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
         try {
           const saveAttempt = await Attempt.save();
           console.log(`Document successfully stored in MongoDB ${authId}`);
@@ -53,7 +56,7 @@ router.route('/users')
         }
     })
     .put(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/photos`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -62,12 +65,12 @@ router.route('/users')
         res.status(error.status).json(error);
       }
       // DECONSTRUCT REQ.BODY OBJECT FOR SECURITY PURPOSES
-      const { authId, username, password, firstName, lastName } = req.body;
+      const { authId, images, favorites, firstName, lastName } = req.body;
       // RECONSTRUCT PARAMS OBJECT TO DELETE PROPERTIES WITH UNDEFINED VALUES TO PREVENT OVERWRITING WITH NULL
-      const params = { username, password, firstName, lastName };
+      const params = { authId, images, favorites, firstName, lastName };
       for (const prop in params) if(!params[prop]) delete params[prop];
       try {
-        const response = await users.findOneAndUpdate({ authId: authId }, params, { upsert: false, useFindAndModify: false })
+        const response = await photos.findOneAndUpdate({ authId: authId }, params, { upsert: true, useFindAndModify: false })
         console.log(`Document successfully updated in MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {
@@ -79,9 +82,8 @@ router.route('/users')
         res.status(error.status).json(error);
       }
     })
-      // DELETE: authId
     .delete(async (req, res) => {
-      console.log(`Received ${req.method} request at api/users`)
+      console.log(`Received ${req.method} request at api/photos`)
       if (!req.body) {
         const error = {
           status: 500,
@@ -89,10 +91,10 @@ router.route('/users')
         }
         res.status(error.status).json(error);
       }
-      const { authId } = req.body;
-      // DELETE USER DATA BY USER ID
+      // DELETE NFT METADATA BY TOKENID
+      const { tokenId } = req.body;
       try {
-        const response = await users.deleteOne({ authId: authId });
+        const response = await photos.deleteOne({ authId: authId });
         console.log(`Document successfully deleted from MongoDB: ${authId}`);
         res.status(200).json(response);
       } catch (err) {

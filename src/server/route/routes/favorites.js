@@ -13,9 +13,8 @@ router.route('/users')
         res.status(error.status).json(error);
       }
       try {
-        // FETCH ALL DATA ASSOCIATED WITH AUTH ID
-        const { authId } = req.body;
-        const response = await users.find({ authId: authId });
+        // FETCH ALL WATCHED NFT METADATA ASSOCIATED WITH USER ID
+        const response = await users.find({ });
         console.log('Documents successfully retrieved from MongoDB');
         res.json(response);
       } catch (err) {
@@ -36,9 +35,9 @@ router.route('/users')
         }
         res.status(error.status).json(error);
       }
-      // SAVE NEW USER
-      const { authId, username, password, firstName, lastName } = req.body;
-        const Attempt = new users({ _id: Types.ObjectId(), authId, username, password, firstName, lastName });
+      // SAVE POSTED METADATA IN WATCHED COLLECTION
+      const { authId, images, favorites, firstName, lastName } = req.body;
+        const Attempt = new users({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
         try {
           const saveAttempt = await Attempt.save();
           console.log(`Document successfully stored in MongoDB ${authId}`);
@@ -62,9 +61,9 @@ router.route('/users')
         res.status(error.status).json(error);
       }
       // DECONSTRUCT REQ.BODY OBJECT FOR SECURITY PURPOSES
-      const { authId, username, password, firstName, lastName } = req.body;
+      const { authId, images, favorites, firstName, lastName, username, password } = req.body;
       // RECONSTRUCT PARAMS OBJECT TO DELETE PROPERTIES WITH UNDEFINED VALUES TO PREVENT OVERWRITING WITH NULL
-      const params = { username, password, firstName, lastName };
+      const params = { authId, images, favorites, firstName, lastName, username, password };
       for (const prop in params) if(!params[prop]) delete params[prop];
       try {
         const response = await users.findOneAndUpdate({ authId: authId }, params, { upsert: false, useFindAndModify: false })
@@ -79,7 +78,6 @@ router.route('/users')
         res.status(error.status).json(error);
       }
     })
-      // DELETE: authId
     .delete(async (req, res) => {
       console.log(`Received ${req.method} request at api/users`)
       if (!req.body) {
@@ -89,8 +87,8 @@ router.route('/users')
         }
         res.status(error.status).json(error);
       }
-      const { authId } = req.body;
-      // DELETE USER DATA BY USER ID
+      // DELETE NFT METADATA BY TOKENID
+      const { tokenId } = req.body;
       try {
         const response = await users.deleteOne({ authId: authId });
         console.log(`Document successfully deleted from MongoDB: ${authId}`);
