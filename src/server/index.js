@@ -1,6 +1,7 @@
 const express = require('express');
 const router = require('./route');
 const DBConnect = require('./dbConfigs');
+const cors = require('cors')
 
 // APP IS EXPRESS
 const app = express();
@@ -8,6 +9,9 @@ const app = express();
 // PARSE DATA IN REQUEST BODIES
 app.use(express.urlencoded({extended: true}));
 app.use(express.json()) 
+
+//Needed for File Upload on Multer
+app.use(cors())
 
 // PORT DEFINITION
 const port = Number(process.env.PORT) || 3000;

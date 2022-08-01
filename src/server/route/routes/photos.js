@@ -1,110 +1,99 @@
-const { Types } = require('mongoose');
 const router = require('../router');
-const { userModel } = require('../../models');
-const { imgUpload } = require('../../middlewares/uploads/imgUpload');
-// const { imgUpload } = require('../../middlewares/uploads/imgUpload.js');
+const { userModel: { userModel } } = require('../../models');
+// const { imgUpload } = require('../../middlewares/uploads/imgUpload');
 
 router.route('/photos')
-    .get(async (req, res) => {
-      console.log(`Received ${req.method} request at api/photos`)
-      if (!req.body) {
-        const error = {
-          status: 500,
-          message: "Nothing found in request body"
-        }
-        res.status(error.status).json(error);
+  .post(async (req, res) => {
+    console.log(`Received ${req.method} request at api/photos`)
+    if (!req.body) {
+      const error = {
+        status: 500,
+        message: "Nothing found in request body"
       }
+      res.status(error.status).json(error);
+    }
+    /* 
+      ------- Middleware can be invoked here -------
+      Pass request body object containing uploaded file
+      into middleware controller for file storage and it 
+      should return string of URL.
+
+      Example:
+      const imgUrl = await imgUpload(req); // return string of URL
+    */
+    let imgUrl = 'google.com';
+    // SAVE STRING URL OF UPLOADED IMAGE IN CORRECT ALBUM
+    const { authId, albumId } = req.body;
       try {
-        // FETCH ALL WATCHED NFT METADATA ASSOCIATED WITH USER ID
-        const response = await userModel.find({ });
-        console.log('Documents successfully retrieved from MongoDB');
-        res.json(response);
+        // ADD PHOTO REFERENCE TO CORRECT ALBUM
+        await userModel.updateOne(
+            { 'authId': authId, 'albums.albumId': albumId }, 
+            { $push: {
+                'albums.$.photos': imgUrl
+              } 
+            }
+        );
+        // ADD PHOTO REFERENCE TO GLOBAL ALBUM
+        await userModel.updateOne(
+          { 'authId': authId }, 
+          { $push: {
+              'global': imgUrl
+            } 
+          }
+        );
+        console.log(`Document successfully stored in MongoDB ${authId}`);
+        res.status(201).json({albumId, imgUrl});
       } catch (err) {
         const error = {
           status: 500,
-          message: `Unable to fulfull GET request: ${err}`
+          message: `Unable to fulfull POST request: ${err}`
         };
         console.log(err);
         res.status(error.status).json(error);
       }
     })
-    .post(async (req, res) => {
-      console.log(`Received ${req.method} request at api/photos`)
-      if (!req.body) {
-        const error = {
-          status: 500,
-          message: "Nothing found in request body"
+  .delete(async (req, res) => {
+    console.log(`Received ${req.method} request at api/photos`)
+    if (!req.body) {
+      const error = {
+        status: 500,
+        message: "Nothing found in request body"
+      }
+      res.status(error.status).json(error);
+    }
+    // DELETE PHOTO REFERENCE FROM ALBUM AND FAVORITES ARRAY, AS WELL AS FILE IF FILE BOOLEAN IS PASSED
+    const { authId, albumId, imgUrl, file } = req.body;
+    try {
+      // REMOVE FILE REFERENCE REGARDLESS OF PASSED FILE BOOLEAN VARIABLE
+      const response = await userModel.updateOne(
+        { authId: authId, 'albums.albumId': albumId },
+        { $pull: {
+            'albums.$.photos': imgUrl
+          }
         }
-        res.status(error.status).json(error);
+      );
+      if (file) {
+        // DELETE FILE FROM DIRECTORY IF PASSED FILE BOOLEAN IS TRUE, 
+        // ELSE LEAVE FILE REFERENCE IN GLOBAL GALLERY AND FILE IN FOLDER
+        // INSERT FUNCTION TO DELETE FILE FROM FOLDER!
+        await userModel.updateOne(
+          { authId: authId },
+          { $pull: { 
+              'global': imgUrl
+            }
+          }
+        );
       }
-      // RUN REQUEST THROUGH MIDDLEWARE
-      // const imgUrl = await imgUpload(req); // return string of URL
-      // SAVE POSTED METADATA IN WATCHED COLLECTION
-      const { authId, images, favorites, firstName, lastName } = req.body;
-        const Attempt = new userModel({ _id: Types.ObjectId(), authId, images, favorites, firstName, lastName });
-        try {
-          const saveAttempt = await Attempt.save();
-          console.log(`Document successfully stored in MongoDB ${authId}`);
-          res.status(201).json(saveAttempt);
-        } catch (err) {
-          const error = {
-            status: 500,
-            message: `Unable to fulfull POST request: ${err}`
-          };
-          console.log(err);
-          res.status(error.status).json(error);
-        }
-    })
-    .put(async (req, res) => {
-      console.log(`Received ${req.method} request at api/photos`)
-      if (!req.body) {
-        const error = {
-          status: 500,
-          message: "Nothing found in request body"
-        }
-        res.status(error.status).json(error);
-      }
-      // DECONSTRUCT REQ.BODY OBJECT FOR SECURITY PURPOSES
-      const { authId, images, favorites, firstName, lastName } = req.body;
-      // RECONSTRUCT PARAMS OBJECT TO DELETE PROPERTIES WITH UNDEFINED VALUES TO PREVENT OVERWRITING WITH NULL
-      const params = { authId, images, favorites, firstName, lastName };
-      for (const prop in params) if(!params[prop]) delete params[prop];
-      try {
-        const response = await userModel.findOneAndUpdate({ authId: authId }, params, { upsert: true, useFindAndModify: false })
-        console.log(`Document successfully updated in MongoDB: ${authId}`);
-        res.status(200).json(response);
-      } catch (err) {
-        const error = {
-          status: 500,
-          message: `Unable to fulfull PUT request: ${err}`
-        };
-        console.log(err);
-        res.status(error.status).json(error);
-      }
-    })
-    .delete(async (req, res) => {
-      console.log(`Received ${req.method} request at api/photos`)
-      if (!req.body) {
-        const error = {
-          status: 500,
-          message: "Nothing found in request body"
-        }
-        res.status(error.status).json(error);
-      }
-      // DELETE NFT METADATA BY TOKENID
-      const { tokenId } = req.body;
-      try {
-        const response = await userModel.deleteOne({ authId: authId });
-        console.log(`Document successfully deleted from MongoDB: ${authId}`);
-        res.status(200).json(response);
-      } catch (err) {
-        const error = {
-          status: 500,
-          message: `Unable to fulfull DELETE request: ${err}`
-        };
-        console.log(err);
-        res.status(error.status).json(error);
-      }
-    });
+      console.log(`Document successfully deleted from MongoDB: ${authId}`);
+      res.status(200).json({response, file});
+    } catch (err) {
+      const error = {
+        status: 500,
+        message: `Unable to fulfull DELETE request: ${err}`
+      };
+      console.log(err);
+      res.status(error.status).json(error);
+    }
+  });
 
 module.exports = router;

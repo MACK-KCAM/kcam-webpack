@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 const router = require('../router');
-const { userModel } = require('../../models');
+const { userModel: { userModel } } = require('../../models');
 
 router.route('/favorites')
     .get(async (req, res) => {

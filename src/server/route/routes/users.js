@@ -1,6 +1,6 @@
 const { Types } = require('mongoose');
 const router = require('../router');
-const { userModel } = require('../../models');
+const { userModel : { userModel } } = require('../../models');
 
 router.route('/users')
     .get(async (req, res) => {
@@ -37,8 +37,8 @@ router.route('/users')
         res.status(error.status).json(error);
       }
       // SAVE NEW USER
-      const { authId, username, password, firstName, lastName } = req.body;
-        const Attempt = new userModel({ _id: Types.ObjectId(), authId, username, password, firstName, lastName });
+      const { authId, username, password, firstName, lastName, albums, currentAlbumId } = req.body;
+        const Attempt = new userModel({ _id: Types.ObjectId(), authId, username, password, firstName, lastName, albums, currentAlbumId });
         try {
           const saveAttempt = await Attempt.save();
           console.log(`Document successfully stored in MongoDB ${authId}`);
