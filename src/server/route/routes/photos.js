@@ -72,10 +72,10 @@ router.route('/photos')
           }
         }
       );
+      // DELETE FILE FROM DIRECTORY IF PASSED FILE BOOLEAN IS TRUE, 
+      // ELSE LEAVE FILE REFERENCE IN GLOBAL GALLERY AND FILE IN FOLDER
+      // INSERT FUNCTION TO DELETE FILE FROM FOLDER!
       if (file) {
-        // DELETE FILE FROM DIRECTORY IF PASSED FILE BOOLEAN IS TRUE, 
-        // ELSE LEAVE FILE REFERENCE IN GLOBAL GALLERY AND FILE IN FOLDER
-        // INSERT FUNCTION TO DELETE FILE FROM FOLDER!
         await userModel.updateOne(
           { authId: authId },
           { $pull: { 
